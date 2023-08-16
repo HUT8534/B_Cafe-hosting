@@ -1,0 +1,137 @@
+@charset "UTF-8";
+
+#modal_wrap {
+	display: none;
+	position: fixed;
+	z-index: 9;
+	margin: 0 auto;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+#first {
+	display: none;
+	position: fixed;
+	z-index: 10;
+	margin: 0 auto;
+	bottom: 30px;
+	left: 0;
+	right: 0;
+	width: 500px;
+	height: 550px;
+	background-color: rgba(0, 0, 0, 1);
+	color: white;
+}
+
+textarea {
+	resize: none;
+}
+
+h1 {
+	text-align: center;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+section.notice {
+  padding: 80px 0;
+}
+.page-title {
+  margin-bottom: 60px;
+}
+.board-table {
+  font-size: 13px;
+  width: 100%;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+.board-table a {
+  color: #333;
+  display: inline-block;
+  line-height: 1.4;
+  word-break: break-all;
+  vertical-align: middle;
+}
+.board-table th {
+  text-align: center;
+}
+
+.board-table .th-num {
+  width: 100px;
+  text-align: center;
+}
+
+.board-table .th-date {
+  width: 300px;
+}
+.board-table .th-user {
+  width: 200px;
+}
+
+.board-table thead td{
+  padding: 5px 30px 5px 0;
+}
+
+.board-table th, .board-table td {
+  padding: 14px 0;
+}
+.content {
+  padding: 7px 50px;
+}
+.board-table td.gongjiFlow {
+  border-top:1px solid #DDDDDD;
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.inner-Contents{
+  border-top:1px solid #CCCCCC;
+}
+.title {
+  border-bottom: 1px solid #CCCCCC;
+}
+
+/* reset */
+
+* {
+  list-style: none;
+  text-decoration: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.clearfix:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.container {
+  width: 1100px;
+  margin: 0 auto;
+}
+.blind {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  margin: -1px;
+  width: 1px;
+  height: 1px; 
+}
+
+.larger-submit {
+	padding: 10px 20px; /* 원하는 패딩 값으로 조정 */
+	font-size: 16px; /* 원하는 폰트 크기로 조정 */
+}
+
+.larger-button {
+	padding: 10px 20px; /* 원하는 패딩 값으로 조정 */
+	font-size: 16px; /* 원하는 폰트 크기로 조정 */
+}

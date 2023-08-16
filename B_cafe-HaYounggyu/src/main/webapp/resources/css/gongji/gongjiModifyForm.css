@@ -1,0 +1,127 @@
+@charset "UTF-8";
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+section.notice {
+  padding: 80px 0;
+}
+.page-title {
+  margin-bottom: 60px;
+}
+.board-table {
+  font-size: 13px;
+  width: 100%;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+.board-table a {
+  color: #333;
+  display: inline-block;
+  line-height: 1.4;
+  word-break: break-all;
+  vertical-align: middle;
+}
+.board-table th {
+  text-align: center;
+}
+
+.board-table .th-num {
+  width: 100px;
+  text-align: center;
+}
+
+.board-table .th-date {
+  width: 300px;
+}
+.board-table .th-user {
+  width: 200px;
+}
+
+.board-table thead td{
+  padding: 5px 30px 5px 0;
+}
+
+.board-table th, .board-table td {
+  padding: 14px 0;
+}
+.content {
+  padding: 7px 14px;
+}
+.board-table td.gongjiFlow {
+  border-top:1px solid #DDDDDD;
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.inner-Contents{
+  border-top:1px solid #CCCCCC;
+}
+.title {
+  border-bottom: 1px solid #CCCCCC;
+}
+#content {
+  padding: 7px 14px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0 30px;
+  font-size: 15px;
+  font-weight: 400;
+  background: transparent;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+/* reset */
+
+* {
+  list-style: none;
+  text-decoration: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+.container {
+  width: 1100px;
+  margin: 0 auto;
+}
+.blind {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  margin: -1px;
+  width: 1px;
+  height: 1px;
+}
+.larger-submit {
+	padding: 10px 20px; /* 원하는 패딩 값으로 조정 */
+	font-size: 16px; /* 원하는 폰트 크기로 조정 */
+}
+
+.larger-button {
+	padding: 10px 20px; /* 원하는 패딩 값으로 조정 */
+	font-size: 16px; /* 원하는 폰트 크기로 조정 */
+}

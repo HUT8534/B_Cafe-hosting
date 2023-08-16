@@ -1,0 +1,20 @@
+--- 而ㅽ뵾 硫붾돱�뀒�씠釉� ---------------------------------------------------------------------------------
+CREATE TABLE menu(
+    menuId NUMBER(20),                      -- �젣�뭹 �븘�씠�뵒
+    menuName VARCHAR2(30) NOT NULL,         -- �젣�뭹 �씠由�
+    menuOption1 VARCHAR2(30),
+    menuOption2 VARCHAR2(30),
+    menuOption3 VARCHAR2(30),
+    menuOption4 VARCHAR2(30),               -- �젣�뭹 �샃�뀡
+    menuPrice VARCHAR2(30),                   -- �젣�뭹 媛�寃�
+    menuImage VARCHAR2(3000) NOT NULL,      -- �젣�뭹 �씠誘몄�    
+    CONSTRAINT menu_PK PRIMARY KEY(menuId)
+);    
+CREATE SEQUENCE menu_SEQ;
+SELECT * FROM menu;
+
+--- 而ㅽ뵾 硫붾돱 �뀒�씠釉� �궘�젣 ---
+ALTER TABLE �뀒�씠釉붾챸
+DROP CONSTRAINT �쇅�옒�궎_�젣�빟議곌굔_�씠由�;
+DROP TABLE menu;
+DROP SEQUENCE menu_SEQ;
