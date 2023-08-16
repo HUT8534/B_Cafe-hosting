@@ -1,0 +1,35 @@
+--- 공지사항(관리자 전용) ------------------------------------------------------------------------------------
+CREATE TABLE gongji(
+   userId VARCHAR2(20) NOT NULL,            -- 유저 아이디(관리자) 
+   gongjiNum NUMBER(10),                    -- 공지사항 번호
+   gongjiTitle VARCHAR2(1000) NOT NULL,     -- 공지사항 제목
+   gongjiContent VARCHAR2(1000) NOT NULL,   -- 공지사항 내용 
+   imagefilename VARCHAR2(1000),            -- 공지 파일 이름
+   regdate DATE DEFAULT SYSDATE,            -- 생성일자
+   CONSTRAINT cafe_gongji_PK PRIMARY KEY(gongjiNum),
+   CONSTRAINT cafe_gongji_cafe_user_FK FOREIGN KEY(userId) REFERENCES cafe_user(userId)
+);
+
+CREATE SEQUENCE gongji_SEQ NOCACHE NOCYCLE;
+
+SELECT * FROM gongji;
+
+--================================ 결제 정보 테이블 ================================
+
+CREATE TABLE payHistory(
+	payNum		NUMBER(15) NOT NULL,
+    userId      VARCHAR2(15) NOT NULL,
+    userAddr    VARCHAR2(1000),
+    userPhone	VARCHAR2(14),
+    menuId      NUMBER(15) NOT NULL,
+    menuName    VARCHAR2(400),
+    menuImage	VARCHAR2(30),
+    detailtext  VARCHAR2(1000),
+    totalPrice  VARCHAR(30),
+    regdate     DATE DEFAULT SYSDATE,
+    CONSTRAINT payment_user_FK FOREIGN KEY(userId) REFERENCES cafe_user(userId)
+);
+CREATE SEQUENCE pay_SEQ;
+
+SELECT * FROM payment;
+SELECT pay_SEQ.CURRVAL FROM DUAL;

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.cafe.mybatis.community.CommunityMapper">
+	
+	<resultMap type="com.web.cafe.community.dto.CommunityDTO" id="community">
+		<id property="communityNum" column="communityNum"/>
+		<result property="communityTitle" column="communityTitle"/>
+		<result property="communityContent" column="communityContent"/>
+		<result property="userId" column="userId"/>
+		<result property="hit" column="hit"/>		
+		<result property="regdate" column="regdate"/>	
+	</resultMap>
+	
+	<resultMap type="com.web.cafe.community.dto.CommunityRepDTO" id="reply">
+		<result property="replySeq" column="replySeq"/>
+		<result property="userId" column="userId"/>
+		<result property="communityContent" column="communityContent"/>
+		<result property="replyNum" column="replyNum"/>
+		<result property="regdate" column="regdate"/>
+	</resultMap>
+		
+	<select id="selectBoardCount" resultType="Integer">
+		SELECT COUNT(*) FROM community
+	</select>
+	
+	<select id="communityAllList" resultMap="community">
+		SELECT B.*FROM
+		(SELECT ROWNUM rn, A.* FROM
+		(SELECT * FROM community ORDER BY communityNum DESC)A )B
+		WHERE rn BETWEEN #{s} and #{e}
+	</select>
+
+	
+	<!-- 공지 검색하기 -->
+<select id="searchList" resultMap="community">
+    SELECT B.* FROM
+    (SELECT ROWNUM rn, A.* FROM
+    (SELECT * FROM community WHERE
+    <choose>
+        <when test='type == "t"'>
+            communityTitle LIKE '%' || #{search} || '%'
+        </when>
+        <when test='type == "c"'>
+            communityContent LIKE '%' || #{search} || '%'
+        </when>
+        <when test='type == "w"'>
+            userId LIKE '%' || #{search} || '%'
+        </when>
+        <when test='type == "tc"'>
+            communityTitle LIKE '%' || #{search} || '%' OR communityContent LIKE '%' ||
+            #{search} || '%'
+        </when>
+    </choose>
+    AND 1=1
+    ORDER BY communityNum DESC) A
+    ) B
+    WHERE rn BETWEEN #{s} AND #{e}
+</select>
+
+	<!-- 커뮤니티 검색수 -->
+	<select id="selectSearchCount" resultType="Integer">
+		SELECT COUNT(*)
+		FROM community
+		<where>
+			<if test="type == 't'">
+				AND communityTitle LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type == 'c'">
+				AND communityContent LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type == 'w'">
+				AND userId LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type == 'tc'">
+				AND (communityTitle LIKE '%' || #{keyword} || '%' OR communityContent
+				LIKE '%' || #{keyword} || '%')
+			</if>
+		</where>
+	</select>
+
+	
+	<select id="communityRepList" resultMap="reply">
+		SELECT * FROM community_reply WHERE replyNum=#{replyNum}
+	</select>
+	
+	<insert id="writeSave">
+		INSERT INTO community(communityNum, communityTitle, userId, communityContent)
+		VALUES(community_SEQ.nextval, #{communityTitle}, #{userId}, #{communityContent})
+	</insert>
+	
+	<select id="contentView" resultMap="community">
+		SELECT * FROM community WHERE communityNum=#{communityNum}
+	</select>
+	
+	<update id="updateHit">
+		UPDATE community SET hit=hit+1 WHERE communityNum=#{communityNum}
+	</update>
+	
+	<update id="modify">
+		UPDATE community SET communityTitle=#{communityTitle},communityContent=#{communityContent} WHERE communityNum=#{communityNum}
+	</update>
+	
+	<delete id="delete">
+ 		DELETE FROM community WHERE communityNum=#{communityNum}
+ 	</delete>
+ 	
+ 	<delete id="deleteRep">
+ 		DELETE FROM community_reply WHERE replySeq=#{replySeq}
+ 	</delete>
+ 	
+ 	<insert id="addReply">
+ 		INSERT INTO community_reply(replySeq, userId, communityContent, replyNum, regdate)
+ 		VALUES(community_reply_SEQ.nextval, #{userId}, #{communityContent}, #{replyNum}, SYSDATE)
+ 	</insert>
+ 	
+	<select id="getRepList" resultMap="reply">
+		SELECT * FROM community_reply WHERE replyNum=#{replyNum}
+ 		ORDER BY replySeq DESC
+	</select>	
+	
+	
+</mapper>
+
+
+
+
+
+

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.web.cafe.mybatis.gongji.GongjiMapper">
+	<resultMap type="com.web.cafe.gongji.dto.GongjiDTO" id="gongji">
+		<id property="userId" column="userId"/>
+		<result property="gongjiNum" column="gongjiNum"/>
+		<result property="gongjiTitle" column="gongjiTitle"/>
+		<result property="gongjiContent" column="gongjiContent"/>
+		<result property="regdate" column="regdate"/>
+		<result property="imageFileName" column="imageFileName"/>
+	</resultMap>
+	
+	<!-- 공지 목록 가져오기 -->
+	<select id="gongjiList" resultMap="gongji">
+		SELECT B.* FROM
+		(SELECT ROWNUM rn, A.* FROM
+		(SELECT * FROM gongji ORDER BY gongjiNum DESC)A )B
+		WHERE rn BETWEEN #{s} and #{e}
+	</select>
+	
+	<!-- 공지 검색하기 -->
+	<select id="gongjiSearch" resultMap="gongji">
+		SELECT B.* FROM
+			(SELECT ROWNUM rn, A.* FROM
+				(SELECT * FROM gongji WHERE
+				<choose>
+					<when test='type == "t"'>
+					  gongjiTitle LIKE '%' || #{search} || '%'
+					</when>
+					<when test='type == "c"'>
+					  gongjiContent LIKE '%' || #{search} || '%'
+					</when>
+					<when test='type == "w"'>
+					  userId LIKE '%' || #{search} || '%'
+					</when>
+					<when test='type == "tc"'>
+					  gongjiTitle LIKE '%' || #{search} || '%' OR gongjiContent LIKE '%' || #{search} || '%'
+					</when>
+				</choose>
+				ORDER BY gongjiNum DESC
+				) A
+			) B
+		WHERE rn BETWEEN #{s} AND #{e}
+	</select>
+
+    
+	<!-- 공지 목록수 -->
+	<select id="selectGongjiCount" resultType="Integer">
+		SELECT COUNT(*) FROM gongji
+	</select>
+	
+	<!-- 공지 검색수 -->
+	<select id="selectSearchCount" resultType="Integer">
+		SELECT COUNT(*) FROM gongji
+		WHERE 1=1
+		<if test='type == "t" and search != null'>
+		  AND gongjiTitle LIKE '%' || #{search} || '%'
+		</if>
+		<if test='type == "c" and search != null'>
+		  AND gongjiContent LIKE '%' || #{search} || '%'
+		</if>
+		<if test='type == "w" and search != null'>
+		  AND userId LIKE '%' || #{search} || '%'
+		</if>
+		<if test='type == "tc" and search != null'>
+		  AND (gongjiTitle LIKE '%' || #{search} || '%' OR gongjiContent LIKE '%' || #{search} || '%')
+		</if>
+	</select>
+	
+	<!-- 공지 등록하기 -->
+	<insert id="gongjiWriteSave">
+		INSERT INTO gongji(userId,gongjiNum,gongjiTitle, gongjiContent, imageFileName)
+		VALUES(#{userId}, gongji_seq.nextval, #{gongjiTitle}, #{gongjiContent}, #{imageFileName})
+	</insert>
+	
+	<!-- 공지 내용 가져오기 -->
+	<select id="gongjiView" resultMap="gongji">
+		SELECT * FROM gongji WHERE gongjiNum=#{gongjiNum}
+	</select>
+	
+	<!-- 공지 수정하기 -->
+	<update id="gongjiModify">
+		UPDATE gongji
+		SET gongjiTitle=#{gongjiTitle},gongjiContent=#{gongjiContent},imageFileName=#{imageFileName}
+		WHERE gongjiNum=#{gongjiNum}
+	</update>
+	
+	<!-- 공지 삭제하기 -->
+	<delete id="gongjiDelete">
+		DELETE FROM gongji WHERE gongjiNum=#{gongjiNum}
+	</delete>
+	
+	<!-- 글번호 정렬 -->
+	<update id="gongjiUpdateNum">
+		UPDATE gongji a
+		SET gongjiNum =
+			(SELECT rn FROM 
+				(SELECT rid, ROWNUM rn
+				 FROM (SELECT ROWID rid 
+				 	   FROM gongji ORDER BY gongjiNum ASC)
+				)WHERE rid = a.ROWID)
+	</update>
+	
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.cafe.mybatis.qna.QnaMapper">
+
+	<resultMap type="com.web.cafe.qna.dto.QnaDTO" id="qna">
+		<id property="qnaNum" column="qnaNum"/>
+		<result property="userId" column="userId"/>
+		<result property="qnaTitle" column="qnaTitle"/>
+		<result property="qnaContent" column="qnaContent"/>
+		<result property="regdate" column="regdate"/>
+	</resultMap>
+	
+	<resultMap type="com.web.cafe.qna.dto.QnaRepDTO" id="reply">
+		<result property="replySeq" column="replySeq"/>
+		<result property="userId" column="userId"/>
+		<result property="qnaReContent" column="qnaReContent"/>
+		<result property="replyNum" column="replyNum"/>
+		<result property="regdate" column="regdate"/>
+	</resultMap>
+	
+	<select id="qnaList" resultMap="qna">
+		SELECT B.*FROM
+		(SELECT ROWNUM rn, A.* FROM
+		(SELECT * FROM qna ORDER BY qnaNum DESC)A )B
+		WHERE rn BETWEEN #{s} and #{e}
+	</select>
+	
+	<select id="qnaSearch" resultMap="qna">
+	  SELECT B.*FROM
+	  (SELECT ROWNUM rn, A.* FROM
+	  (SELECT * FROM qna WHERE
+	        <choose>
+	          <when test='type == "t"'>
+	            qnaTitle LIKE '%' || #{search} || '%'
+	          </when>
+	          <when test='type == "c"'>
+	            qnaContent LIKE '%' || #{search} || '%'
+	          </when>
+	          <when test='type == "w"'>
+	            userId LIKE '%' || #{search} || '%'
+	          </when>
+	          <when test='type == "tc"'>
+	            qnaTitle LIKE '%' || #{search} || '%' OR qnaContent LIKE '%' || #{search} || '%'
+	          </when>
+	        </choose>
+	      ORDER BY qnaNum DESC) A
+	    ) B
+	  WHERE rn BETWEEN #{s} AND #{e}
+	</select>
+	
+	
+	<select id="selectBoardCount" resultType="Integer">
+		SELECT COUNT(*) FROM qna
+	</select>
+	
+
+	<select id="selectSearchCount" resultType="Integer">
+	  SELECT COUNT(*) FROM qna
+	  <where>
+	    <if test="type == 't'">
+	      AND qnaTitle LIKE '%' || #{keyword} || '%'
+	    </if>
+	    <if test="type == 'c'">
+	      AND qnaContent LIKE '%' || #{keyword} || '%'
+	    </if>
+	    <if test="type == 'w'">
+	      AND userId LIKE '%' || #{keyword} || '%'
+	    </if>
+	    <if test="type == 'tc'">
+	      AND (qnaTitle LIKE '%' || #{keyword} || '%' OR qnaContent LIKE '%' || #{keyword} || '%')
+	    </if>
+	  </where>
+	</select>
+	
+	<insert id="writeSave">
+		INSERT INTO qna(qnaNum, qnaTitle, userId, qnaContent)
+		VALUES(qna_SEQ.nextval, #{qnaTitle}, #{userId}, #{qnaContent})
+	</insert>
+	
+	<select id="qnacontentView" resultMap="qna">
+		SELECT * FROM qna WHERE qnaNum=#{qnaNum}
+	</select>
+	
+	<update id="modify">
+		UPDATE qna SET qnaTitle=#{qnaTitle},qnaContent=#{qnaContent} WHERE qnaNum=#{qnaNum}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM qna WHERE qnaNum=${qnaNum}
+	</delete>
+	
+	<insert id="addReply">
+		INSERT INTO qna_reply(replySeq, userId, qnaReContent, replyNum)
+		VALUES(qna_reply_SEQ.nextval, #{userId}, #{qnaReContent}, #{replyNum})
+	</insert>
+	
+	<select id="getRepList" resultMap="reply">
+		SELECT * FROM qna_reply WHERE replyNum=#{replyNum}
+		ORDER BY replySeq DESC
+	</select>
+	
+	<delete id="deleteRep">
+ 		DELETE FROM qna_reply WHERE replySeq=#{replySeq}
+ 	</delete>
+ 	
+</mapper>
+
+
+

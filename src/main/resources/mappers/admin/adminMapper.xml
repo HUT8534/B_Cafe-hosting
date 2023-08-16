@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.web.cafe.mybatis.admin.AdminMapper">
+	<resultMap type="com.web.cafe.admin.dto.AdminDTO"
+		id="product">
+		<result property="pasingNum" column="pasingNum" />
+		<result property="menuId" column="menuId" />
+		<result property="menuName" column="menuName" />
+		<result property="menuOption1" column="menuOption1" />
+		<result property="menuOption2" column="menuOption2" />
+		<result property="menuOption3" column="menuOption3" />
+		<result property="menuOption4" column="menuOption4" />
+		<result property="menuPrice" column="menuPrice" />
+		<result property="menuImage" column="menuImage" />
+	</resultMap>
+
+	<resultMap type="com.web.cafe.cart.dto.CartDTO" id="cart">
+		<result property="totalPrice" column="totalPrice" />
+		<result property="detailText" column="detailText" />
+		<result property="userId" column="userId" />
+		<result property="cartId" column="cartId" />
+		<result property="regdate" column="regdate" />
+	</resultMap>
+
+	<resultMap type="com.web.cafe.member.dto.MemberDTO"
+		id="member">
+		<result property="userId" column="userId" />
+		<result property="userPw" column="userPw" />
+		<result property="userName" column="userName" />
+		<result property="userBirth" column="userBirth" />
+		<result property="userAddr" column="userAddr" />
+		<result property="userPhone" column="userPhone" />
+		<result property="userEmail" column="userEmail" />
+		<result property="regdate" column="regdate" />
+	</resultMap>
+
+	<resultMap type="com.web.cafe.admin.dto.PayHistoryDTO"
+		id="pay">
+		<id property="payNum" column="payNum" />
+		<result property="menuName" column="menuName" />
+		<result property="menuId" column="menuId" />
+		<result property="menuImage" column="menuImage" />
+		<result property="totalPrice" column="totalPrice" />
+		<result property="detailText" column="detailText" />
+		<result property="regdate" column="regdate" />
+		<result property="userId" column="userId" />
+		<result property="userAddr" column="userAddr" />
+		<result property="userPhone" column="userPhone" />
+	</resultMap>
+
+	<insert id="inputProduct">
+		INSERT INTO menu(menuId, menuName,menuPrice,menuImage, menuOption1,
+		menuOption2) VALUES(#{menuId}, #{menuName}, #{menuPrice},
+		#{menuImage}, #{menuOption1},#{menuOption2})
+	</insert>
+	<select id="allMenuView" resultMap="product">
+		SELECT * FROM menu
+	</select>
+	<select id="editView" resultMap="product">
+		SELECT * FROM menu WHERE menuName=#{menuName}
+	</select>
+	<update id="editSave">
+		UPDATE menu SET menuOption1=#{menuOption1}, menuOption2=#{menuOption2},
+		menuId=#{menuId}, menuImage=#{menuImage}, menuPrice=#{menuPrice} WHERE
+		menuName=#{menuName}
+	</update>
+
+	<delete id="productDelete">
+		DELETE FROM menu WHERE menuId = #{menuId}
+	</delete>
+	<delete id="cartDelete">
+		DELETE FROM cart WHERE menuId=#{menuId}
+	</delete>
+	<insert id="insertCart">
+		INSERT INTO cart
+		VALUES(cart_SEQ.nextval,#{userId},#{menuId},#{totalPrice},#{detailText},SYSDATE)
+	</insert>
+	<select id="getCartList" resultMap="cart, product">
+		SELECT c.cartId, c.userId, c.detailText, c.totalPrice, m.menuId, m.menuName,
+		m.menuOption1, m.menuOption2, m.menuOption3, m.menuPrice, m.menuImage
+		FROM cart c
+		LEFT JOIN menu m ON c.menuId = m.menuId
+		WHERE c.userId = #{userId}
+	</select>
+	<select id="getMenuList" resultMap="cart, product">
+		SELECT c.cartId, c.userId, c.detailText, c.totalPrice, m.menuId, m.menuName,
+		m.menuOption1, m.menuOption2, m.menuOption3, m.menuPrice, m.menuImage
+		FROM cart c
+		LEFT JOIN menu m ON c.menuId = m.menuId
+		WHERE c.userId = #{userId}
+	</select>
+
+	<delete id="deleteCart">
+		DELETE FROM cart WHERE cartId=#{cartId}
+	</delete>
+
+	<select id="allMenuViewPasing" resultMap="product">
+		SELECT B.*FROM
+		(SELECT ROWNUM rn, A.* FROM
+		(SELECT * FROM menu ORDER BY pasingNum DESC)A )B
+		WHERE rn BETWEEN #{s} and #{e}
+	</select>
+	<select id="selectProductCount" resultType="Integer">
+		SELECT COUNT (*) FROM menu
+	</select>
+	<delete id="payment">
+		DELETE FROM cart WHERE userId =#{userId}
+	</delete>
+
+
+    <!-- 결제 정보 등록 -->
+    <insert id="insertPayment" parameterType="com.web.cafe.admin.dto.PayHistoryDTO">
+    	INSERT INTO payHistory (payNum, userId, userAddr, userPhone, menuName, detailText, totalPrice) 	
+    	VALUES (pay_seq.NEXTVAL, #{userId}, #{userAddr}, #{userPhone},#{menuName}, #{detailText}, #{totalPrice})
+    </insert>
+
+	<!-- ========================================================거래 내역============================================================== -->
+
+	<!-- 결제 정보 가져오기 -->
+	<select id="getPayResult" resultMap="pay">
+		SELECT b.menuName, b.menuId, b.menuImage, c.totalPrice, c.detailText,
+		a.userId, a.userAddr, a.userPhone
+		FROM cart c
+		JOIN cafe_user a ON c.userId = a.userId
+		LEFT JOIN menu b ON c.menuId = b.menuId
+		WHERE a.userId=#{userId}
+	</select>
+
+
+	<!-- 결제 정보 목록 -->
+	<select id="getPaymentList" resultMap="pay">
+		SELECT * FROM payHistory
+		WHERE userId=#{userId}
+		ORDER BY regdate DESC
+	</select>
+	
+	<!-- 결제 메뉴 목록 -->
+	<select id="getDetailMenu" resultMap="pay">
+		SELECT menuName FROM payHistory WHERE userId=#{userId} AND payNum=#{payNum}
+	</select>
+	
+	<!-- 결제 상세 정보 -->
+	<select id="paymentDetails" resultMap="pay">
+		SELECT * FROM payHistory WHERE payNum=#{payNum} AND userId=#{userId}
+	</select>
+
+	<!-- 결제 정보 삭제 -->
+	<delete id="deletePayment">
+		DELETE FROM payHistory WHERE payNum=#{payNum}
+	</delete>
+
+	<!-- 결제 번호 정렬 -->
+	<update id="orderPayNum">
+		UPDATE payHistory a
+		SET payNum = (
+		SELECT rn FROM (
+		SELECT rid, ROWNUM rn FROM (
+		SELECT ROWID rid
+		FROM payHistory
+		WHERE userId=#{userId}
+		ORDER BY regdate DESC
+		)
+		) WHERE rid = a.ROWID
+		) WHERE userId=#{userId}
+	</update>
+</mapper>
